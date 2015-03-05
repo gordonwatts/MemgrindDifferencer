@@ -32,11 +32,7 @@ namespace memgrind_diff
                 Console.WriteLine("  Suppressed blocks: {0} {1}", f.SuppressedBlocks, f.SuppressedBytes);
 
                 Console.WriteLine("  Saw {0} types of errors.", f.GrindDumpErrors.Count);
-                foreach (var error in f.GrindDumpErrors)
-                {
-                    Console.WriteLine("    Error: {0}", error.Value.Name);
-                    Console.WriteLine("      Occured: {0}", error.Value.Occurances);
-                }
+                Console.WriteLine("  Saw {0} loss records", f.DefinitelyLost.Count);
             }
 
             // Dump to excel
