@@ -5,7 +5,7 @@ using MemgrindDifferencingEngine.Util;
 using System;
 using System.Collections.Generic;
 
-namespace MemgrindDifferencingEngine
+namespace MemgrindDifferencingEngine.ExcelHelpers
 {
     /// <summary>
     /// A table that will auto-fill.

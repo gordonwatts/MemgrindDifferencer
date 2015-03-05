@@ -1,9 +1,12 @@
 ﻿
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Spreadsheet;
 using MemgrindDifferencingEngine.DataModel;
+using MemgrindDifferencingEngine.ExcelHelpers;
+using MemgrindDifferencingEngine.Util;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 namespace MemgrindDifferencingEngine
 {
     /// <summary>
@@ -21,7 +24,38 @@ namespace MemgrindDifferencingEngine
             using (var results = SpreadsheetDocument.Create(outputFile.FullName, SpreadsheetDocumentType.Workbook))
             {
                 DumpSummary(results, info);
+                DumpGrindErrors(results, info);
                 results.Close();
+            }
+        }
+
+        /// <summary>
+        /// Dump the memory errors that were found
+        /// </summary>
+        /// <param name="doc"></param>
+        /// <param name="infos"></param>
+        private static void DumpGrindErrors(SpreadsheetDocument doc, MemgrindInfo[] infos)
+        {
+            var errorTypes = infos.SelectMany(i => i.GrindDumpErrors).Select(i => i.Value.Name).ToHashSet();
+
+            foreach (var errorType in errorTypes)
+            {
+                var wsp = doc.CreateSheet(errorType);
+                var allKeys = infos.SelectMany(i => i.GrindDumpErrors).Select(i => i.Key).ToHashSet();
+
+                var t = new AutoFillTable<Dictionary<string, MemGrindDumpError>>();
+                foreach (var k in allKeys)
+                {
+                    t.AddRowNumber(k, tinfo => tinfo.Where(v => v.Key == k).Select(v => v.Value.Occurances).FirstOrDefault());
+                }
+
+                foreach (var info in infos)
+                {
+                    t.FillColumn(info.Description, info.GrindDumpErrors);
+                }
+
+                t.DumpToExcel(wsp, doc);
+                wsp.Worksheet.Save();
             }
         }
 
@@ -31,26 +65,7 @@ namespace MemgrindDifferencingEngine
         /// <param name="spreadsheetDocument"></param>
         private static void DumpSummary(SpreadsheetDocument spreadsheetDocument, MemgrindInfo[] infos)
         {
-            // Add a WorkbookPart to the document.
-            WorkbookPart workbookpart = spreadsheetDocument.AddWorkbookPart();
-            workbookpart.Workbook = new Workbook();
-
-            // Add a WorksheetPart to the WorkbookPart.
-            WorksheetPart worksheetPart = workbookpart.AddNewPart<WorksheetPart>();
-            worksheetPart.Worksheet = new Worksheet(new SheetData());
-
-            // Add Sheets to the Workbook.
-            Sheets sheets = spreadsheetDocument.WorkbookPart.Workbook.AppendChild<Sheets>(new Sheets());
-
-            // Append a new worksheet and associate it with the workbook.
-            Sheet sheet = new Sheet()
-            {
-                Id = spreadsheetDocument.WorkbookPart.
-                    GetIdOfPart(worksheetPart),
-                SheetId = 1,
-                Name = "Summary"
-            };
-            sheets.Append(sheet);
+            var worksheetPart = spreadsheetDocument.CreateSheet("Summary");
 
             // Create a table with summary data in it
             var t = new AutoFillTable<MemgrindInfo>();
@@ -71,9 +86,6 @@ namespace MemgrindDifferencingEngine
             t.DumpToExcel(worksheetPart, spreadsheetDocument);
 
             worksheetPart.Worksheet.Save();
-
-
-            workbookpart.Workbook.Save();
         }
     }
 }

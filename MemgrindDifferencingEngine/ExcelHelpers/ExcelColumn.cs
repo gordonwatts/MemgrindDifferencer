@@ -1,6 +1,6 @@
 ﻿
 using System;
-namespace MemgrindDifferencingEngine
+namespace MemgrindDifferencingEngine.ExcelHelpers
 {
     class ExcelColumn
     {

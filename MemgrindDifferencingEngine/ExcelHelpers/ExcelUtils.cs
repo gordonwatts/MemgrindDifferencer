@@ -4,7 +4,7 @@ using DocumentFormat.OpenXml.Spreadsheet;
 using System;
 using System.Linq;
 
-namespace MemgrindDifferencingEngine.Util
+namespace MemgrindDifferencingEngine.ExcelHelpers
 {
     static class ExcelUtils
     {
@@ -116,6 +116,50 @@ namespace MemgrindDifferencingEngine.Util
         public static void SetCell(this WorksheetPart ws, ExcelColumn colName, uint row, Cell content)
         {
             SetCell(ws, colName.Name, row, content);
+        }
+
+        /// <summary>
+        /// Track what sheet id we should use next.
+        /// </summary>
+        private static uint _gNextFreeSheetID = 1;
+
+        /// <summary>
+        /// Create a new worksheet part
+        /// </summary>
+        /// <param name="doc"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static WorksheetPart CreateSheet(this SpreadsheetDocument doc, string name)
+        {
+            // Add a WorkbookPart to the document.
+            if (doc.WorkbookPart == null)
+            {
+                doc.AddWorkbookPart().Workbook = new Workbook();
+            }
+            var workbookpart = doc.WorkbookPart;
+
+            // Add a WorksheetPart to the WorkbookPart.
+            WorksheetPart worksheetPart = workbookpart.AddNewPart<WorksheetPart>();
+            worksheetPart.Worksheet = new Worksheet(new SheetData());
+
+            // Add or get the sheets from the workbook.
+            var sheets = workbookpart.Workbook.GetFirstChild<Sheets>();
+            if (sheets == null)
+            {
+                sheets = doc.WorkbookPart.Workbook.AppendChild<Sheets>(new Sheets());
+            }
+
+            // Append a new worksheet and associate it with the workbook.
+            Sheet sheet = new Sheet()
+            {
+                Id = doc.WorkbookPart.GetIdOfPart(worksheetPart),
+                SheetId = _gNextFreeSheetID,
+                Name = name
+            };
+            _gNextFreeSheetID++;
+            sheets.Append(sheet);
+
+            return worksheetPart;
         }
     }
 }

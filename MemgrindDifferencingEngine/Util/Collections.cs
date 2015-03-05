@@ -17,5 +17,18 @@ namespace MemgrindDifferencingEngine.Util
                 hash.Add(i);
             }
         }
+
+        /// <summary>
+        /// Create a hash set from an enumerable.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static HashSet<T> ToHashSet<T>(this IEnumerable<T> source)
+        {
+            var r = new HashSet<T>();
+            r.AddRange(source);
+            return r;
+        }
     }
 }
