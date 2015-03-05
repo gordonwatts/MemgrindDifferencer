@@ -62,7 +62,6 @@ namespace MemgrindDifferencingEngine.ExcelHelpers
             if (!found)
             {
                 shareStringPart.SharedStringTable.AppendChild(new SharedStringItem(new DocumentFormat.OpenXml.Spreadsheet.Text(value)));
-                shareStringPart.SharedStringTable.Save();
             }
 
             // Now we can set the cell

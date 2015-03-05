@@ -33,6 +33,8 @@ namespace memgrind_diff
 
                 Console.WriteLine("  Saw {0} types of errors.", f.GrindDumpErrors.Count);
                 Console.WriteLine("  Saw {0} loss records", f.DefinitelyLost.Count);
+                Console.WriteLine("  Saw {0} possible loss records", f.PossiblyLost.Count);
+                Console.WriteLine("  Saw {0} reachable records", f.StillReachable.Count);
             }
 
             // Dump to excel
