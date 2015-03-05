@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 
-namespace MemgrindDifferencingEngine.Util
+namespace MemgrindDifferencingEngine.Parsing
 {
     /// <summary>
     /// Helper class to help with parsing various single line items
     /// </summary>
-    class ParseItem
+    class ParseSingleLineItem : ParseItemBase
     {
         private string _startsWith;
         private Regex _re;
         private Action<Match> _actOnResult;
-        public ParseItem(string startsWith, string regPattern, Action<Match> parseIt)
+        public ParseSingleLineItem(string startsWith, string regPattern, Action<Match> parseIt)
         {
             _startsWith = startsWith;
             _re = new Regex(regPattern);
@@ -23,7 +23,7 @@ namespace MemgrindDifferencingEngine.Util
         /// Process this line.
         /// </summary>
         /// <param name="line"></param>
-        internal void Process(string line)
+        public override void Process(string line)
         {
             if (line.StartsWith(_startsWith))
             {

@@ -1,6 +1,6 @@
 ﻿
 using MemgrindDifferencingEngine.DataModel;
-using MemgrindDifferencingEngine.Util;
+using MemgrindDifferencingEngine.Parsing;
 using System.Collections.Generic;
 using System.IO;
 namespace MemgrindDifferencingEngine
@@ -23,9 +23,13 @@ namespace MemgrindDifferencingEngine
             result.Description = input.Name;
 
             // Load up the summary parse items
-            var parseItems = new List<ParseItem>()
+            var summaryParseItems = new ParseAfterLine("==16280== LEAK SUMMARY:")
             {
-                new ParseItem("==16280==", "definitely lost: (?<bytes>[0-9,]+) bytes in (?<blocks>[0-9,]+) blocks", re => { result.LostBlocks = re.AsMemgrindNumber("blocks"); result.LostBytes = re.AsMemgrindNumber("bytes");})
+                new ParseSingleLineItem("==16280==", "definitely lost: (?<bytes>[0-9,]+) bytes in (?<blocks>[0-9,]+) blocks", re => { result.LostBlocks = re.AsMemgrindNumber("blocks"); result.LostBytes = re.AsMemgrindNumber("bytes");})
+            };
+            var parseItems = new List<ParseItemBase>()
+            {
+                summaryParseItems
             };
 
             // Now the main parser loop. These files can be big, so we need to stream them. And they are going

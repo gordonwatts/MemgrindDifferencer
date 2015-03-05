@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 
-namespace MemgrindDifferencingEngine.Util
+namespace MemgrindDifferencingEngine.Parsing
 {
     static class Files
     {

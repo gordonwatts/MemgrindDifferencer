@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace MemgrindDifferencingEngine.Util
+namespace MemgrindDifferencingEngine.Parsing
 {
     static class re
     {
