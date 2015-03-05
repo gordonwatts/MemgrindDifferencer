@@ -13,5 +13,10 @@ namespace MemgrindDifferencingEngine.Util
         {
             return multiline.Substring(0, multiline.IndexOf(Environment.NewLine));
         }
+
+        public static string AfterFirstLine(this string multiline)
+        {
+            return multiline.Substring(multiline.IndexOf(Environment.NewLine) + 1);
+        }
     }
 }

@@ -26,17 +26,18 @@ namespace MemgrindDifferencingEngine.Parsing
         /// <summary>
         /// We found one. Parse and record it.
         /// </summary>
-        /// <param name="key"></param>
-        protected override void RecordError(string key)
+        /// <param name="fullLossMessage"></param>
+        protected override void RecordError(string fullLossMessage)
         {
-            var line = key.FirstLine();
-            var m = _lossParse.Match(line);
+            var lineInfo = fullLossMessage.FirstLine();
+            var key = fullLossMessage.AfterFirstLine();
+            var m = _lossParse.Match(lineInfo);
             if (!m.Success)
             {
-                throw new ArgumentException(string.Format("Could not parse loss line '{0}'", key));
+                throw new ArgumentException(string.Format("Could not parse loss line '{0}'", fullLossMessage));
             }
 
-            var r = new MemGrindLossRecord() { BlocksLost = m.AsMemgrindNumber("blocks"), BytesLost = m.AsMemgrindNumber("bytes") };
+            var r = new MemGrindLossRecord() { BlocksLost = m.AsMemgrindNumber("blocks"), BytesLost = m.AsMemgrindNumber("bytes"), FirstLine = lineInfo };
             _errors[key] = r;
         }
     }

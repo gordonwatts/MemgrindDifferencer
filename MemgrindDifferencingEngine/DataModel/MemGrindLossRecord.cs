@@ -5,5 +5,7 @@ namespace MemgrindDifferencingEngine.DataModel
     {
         public int BytesLost { get; set; }
         public int BlocksLost { get; set; }
+
+        public string FirstLine { get; set; }
     }
 }
