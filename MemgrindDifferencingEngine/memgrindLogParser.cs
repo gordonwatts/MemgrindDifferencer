@@ -36,7 +36,7 @@ namespace MemgrindDifferencingEngine
                 summaryParseItems,
                 new ParseMultilineMessage("== Conditional jump", "Conditional jump or move", result),
                 new ParseMultilineMessage("== Invalid read of size", "Invalid Read", result),
-                new ParseLossRecord("definitely lost"),
+                new ParseLossRecord("definitely lost", result.DefinitelyLost),
             };
 
             // Now the main parser loop. These files can be big, so we need to stream them. And they are going

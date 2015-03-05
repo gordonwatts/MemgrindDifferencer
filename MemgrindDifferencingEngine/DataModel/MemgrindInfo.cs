@@ -41,10 +41,12 @@ namespace MemgrindDifferencingEngine.DataModel
         /// Get the list of errors we've seen so far
         /// </summary>
         public Dictionary<string, MemGrindDumpError> GrindDumpErrors { get; private set; }
+        public Dictionary<string, MemGrindLossRecord> DefinitelyLost { get; private set; }
 
         public MemgrindInfo()
         {
             GrindDumpErrors = new Dictionary<string, MemGrindDumpError>();
+            DefinitelyLost = new Dictionary<string, MemGrindLossRecord>();
         }
     }
 }
