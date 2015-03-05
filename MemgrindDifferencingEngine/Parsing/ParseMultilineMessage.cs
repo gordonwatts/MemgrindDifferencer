@@ -1,102 +1,39 @@
 ﻿
 using MemgrindDifferencingEngine.DataModel;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
 namespace MemgrindDifferencingEngine.Parsing
 {
     /// <summary>
-    /// Parse one of the typical multiline messages.
+    /// Track number of times a multi-line message occurs
     /// </summary>
-    class ParseMultilineMessage : ParseItemBase
+    class ParseMultilineMessage : ParseMultilineMessageBase
     {
-        private string _name;
-        private string _containsText;
-        bool _active = false;
-        List<string> _currentError = new List<string>();
         private MemgrindInfo _info;
+        private string _name;
+        /// <summary>
+        /// Init for multi line counting
+        /// </summary>
+        /// <param name="containsText"></param>
+        /// <param name="name"></param>
+        /// <param name="info"></param>
         public ParseMultilineMessage(string containsText, string name, MemgrindInfo info)
+            : base(containsText)
         {
-            _name = name;
-            _containsText = containsText;
             _info = info;
-        }
-
-        private static Regex endOfError = new Regex("^==[0-9]+==$");
-
-        /// <summary>
-        /// We do multiple lines, so we have to see when we are active (and when we aren't!).
-        /// </summary>
-        /// <param name="line"></param>
-        public override void Process(string line)
-        {
-            if (_active)
-            {
-                // Is this the last line of this error?
-                if (endOfError.Match(line.Trim()).Success)
-                {
-                    // Record, and store for next time.
-                    var bld = new StringBuilder();
-                    foreach (var keyLine in _currentError)
-                    {
-                        bld.AppendLine(keyLine);
-                    }
-                    var key = bld.ToString();
-                    if (!_info.GrindDumpErrors.ContainsKey(key))
-                    {
-                        _info.GrindDumpErrors[key] = new MemGrindDumpError();
-                        _info.GrindDumpErrors[key].Name = _name;
-                    }
-                    _info.GrindDumpErrors[key].Occurances++;
-
-                    // Reset
-                    _active = false;
-                    _currentError.Clear();
-                }
-                else
-                {
-                    // In the middle of parsing this guy
-                    _currentError.Add(StripLineOfValgrind(line));
-                }
-            }
-            else
-            {
-                if (line.StartsWith("==") && line.Contains(_containsText))
-                {
-                    _active = true;
-                    _currentError.Add(StripLineOfValgrind(line));
-                }
-            }
-        }
-
-        private static Regex goodLinePart = new Regex("^==[0-9]+== (?<msg>.+)$");
-        private static Regex findHex = new Regex("0x[0-9A-F]+");
-
-        /// <summary>
-        /// Clean up the line of valgrind message. In particular, remove some of the hex info
-        /// that is bound to be different run-to-run.
-        /// </summary>
-        /// <param name="line"></param>
-        /// <returns></returns>
-        private static string StripLineOfValgrind(string line)
-        {
-            var newline = findHex.Replace(line, "0x0");
-            var m = goodLinePart.Match(newline);
-            if (!m.Success)
-            {
-                return newline;
-            }
-            else
-            {
-                return m.Groups["msg"].Value;
-            }
+            _name = name;
         }
 
         /// <summary>
-        /// We do nothing when we reset.
+        /// Error has shown up - record it.
         /// </summary>
-        public override void Reset()
+        /// <param name="key"></param>
+        protected override void RecordError(string key)
         {
+            if (!_info.GrindDumpErrors.ContainsKey(key))
+            {
+                _info.GrindDumpErrors[key] = new MemGrindDumpError();
+                _info.GrindDumpErrors[key].Name = _name;
+            }
+            _info.GrindDumpErrors[key].Occurances++;
         }
     }
 }

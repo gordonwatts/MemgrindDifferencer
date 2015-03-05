@@ -50,7 +50,9 @@
     <Compile Include="DumpToExcel.cs" />
     <Compile Include="ExcelHelpers\ExcelColumn.cs" />
     <Compile Include="MemgrindLogParser.cs" />
+    <Compile Include="Parsing\ParseLossRecord.cs" />
     <Compile Include="Parsing\ParseMultilineMessage.cs" />
+    <Compile Include="Parsing\ParseMultilineMessageBase.cs" />
     <Compile Include="Parsing\ParseItemBase.cs" />
     <Compile Include="Parsing\ParseAfterLine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

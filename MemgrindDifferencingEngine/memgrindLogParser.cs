@@ -36,6 +36,7 @@ namespace MemgrindDifferencingEngine
                 summaryParseItems,
                 new ParseMultilineMessage("== Conditional jump", "Conditional jump or move", result),
                 new ParseMultilineMessage("== Invalid read of size", "Invalid Read", result),
+                new ParseLossRecord("definitely lost"),
             };
 
             // Now the main parser loop. These files can be big, so we need to stream them. And they are going
@@ -61,15 +62,3 @@ namespace MemgrindDifferencingEngine
         }
     }
 }
-
-#if false
-==16280== LEAK SUMMARY:
-==16280==    definitely lost: 882,960 bytes in 25,957 blocks
-==16280==    indirectly lost: 43,638,695 bytes in 181,383 blocks
-==16280==      possibly lost: 39,136,849 bytes in 503,301 blocks
-==16280==    still reachable: 207,534,176 bytes in 273,479 blocks
-==16280==         suppressed: 69,028,905 bytes in 625,728 blocks
-==16280== 
-==16280== For counts of detected and suppressed errors, rerun with: -v
-==16280== ERROR SUMMARY: 21975 errors from 8507 contexts (suppressed: 1722319 from 5599)
-#endif
