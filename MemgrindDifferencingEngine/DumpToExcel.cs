@@ -41,7 +41,7 @@ namespace MemgrindDifferencingEngine
             foreach (var errorType in errorTypes)
             {
                 var wsp = doc.CreateSheet(errorType);
-                var allKeys = infos.SelectMany(i => i.GrindDumpErrors).Select(i => i.Key).ToHashSet();
+                var allKeys = infos.SelectMany(i => i.GrindDumpErrors).Where(i => i.Value.Name == errorType).Select(i => i.Key).ToHashSet();
 
                 var t = new AutoFillTable<Dictionary<string, MemGrindDumpError>>();
                 foreach (var k in allKeys)
