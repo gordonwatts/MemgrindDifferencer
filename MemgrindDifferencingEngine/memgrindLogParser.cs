@@ -33,7 +33,9 @@ namespace MemgrindDifferencingEngine
             };
             var parseItems = new List<ParseItemBase>()
             {
-                summaryParseItems
+                summaryParseItems,
+                new ParseMultilineMessage("==16280== Conditional jump", "Conditional jump or move", result),
+                new ParseMultilineMessage("==16280== Invalid read of size", "Invalid Read", result),
             };
 
             // Now the main parser loop. These files can be big, so we need to stream them. And they are going
@@ -46,6 +48,13 @@ namespace MemgrindDifferencingEngine
                     p.Process(line);
                 }
 
+                if (line.StartsWith("==16322== Memcheck, a memory error detector"))
+                {
+                    foreach (var p in parseItems)
+                    {
+                        p.Reset();
+                    }
+                }
             }
 
             return result;

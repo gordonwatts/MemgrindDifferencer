@@ -39,8 +39,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataModel\MemGrindDumpError.cs" />
     <Compile Include="DataModel\MemgrindInfo.cs" />
     <Compile Include="MemgrindLogParser.cs" />
+    <Compile Include="Parsing\ParseMultilineMessage.cs" />
     <Compile Include="Parsing\ParseItemBase.cs" />
     <Compile Include="Parsing\ParseAfterLine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

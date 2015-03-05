@@ -40,6 +40,18 @@ namespace MemgrindDifferencingEngine.Parsing
             }
         }
 
+        /// <summary>
+        /// Seeing the start of a new guy
+        /// </summary>
+        public override void Reset()
+        {
+            _active = false;
+            foreach (var item in _items)
+            {
+                item.Reset();
+            }
+        }
+
         public IEnumerator<ParseItemBase> GetEnumerator()
         {
             return _items.GetEnumerator();

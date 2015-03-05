@@ -1,4 +1,5 @@
 ﻿
+using System.Collections.Generic;
 namespace MemgrindDifferencingEngine.DataModel
 {
     /// <summary>
@@ -35,5 +36,15 @@ namespace MemgrindDifferencingEngine.DataModel
         public int SuppressedBlocks { get; set; }
 
         public int SuppressedBytes { get; set; }
+
+        /// <summary>
+        /// Get the list of errors we've seen so far
+        /// </summary>
+        public Dictionary<string, MemGrindDumpError> GrindDumpErrors { get; private set; }
+
+        public MemgrindInfo()
+        {
+            GrindDumpErrors = new Dictionary<string, MemGrindDumpError>();
+        }
     }
 }

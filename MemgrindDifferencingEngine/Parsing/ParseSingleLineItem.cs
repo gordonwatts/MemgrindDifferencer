@@ -34,5 +34,12 @@ namespace MemgrindDifferencingEngine.Parsing
                 }
             }
         }
+
+        /// <summary>
+        /// We do nothing on reset.
+        /// </summary>
+        public override void Reset()
+        {
+        }
     }
 }
