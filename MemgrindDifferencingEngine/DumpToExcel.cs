@@ -27,6 +27,8 @@ namespace MemgrindDifferencingEngine
                 DumpSummary(results, info);
                 DumpGrindErrors(results, info);
                 DumpGrindLossBlocks(results, info, "Definitely Lost", t => t.DefinitelyLost);
+                DumpGrindLossBlocks(results, info, "Possibly Lost", t => t.PossiblyLost);
+                DumpGrindLossBlocks(results, info, "Still Reachable", t => t.StillReachable);
                 results.Close();
             }
         }
@@ -45,7 +47,7 @@ namespace MemgrindDifferencingEngine
             var table = new AutoFillTable<Dictionary<string, MemGrindLossRecord>>();
             foreach (var r in allKeys)
             {
-                table.AddRowNumber(r, tinfo => tinfo.ContainsKey(r) ? tinfo[r].BlocksLost : 0);
+                table.AddRowNumber(r, tinfo => tinfo.ContainsKey(r) ? tinfo[r].BytesLost : 0);
             }
 
             foreach (var info in infos)

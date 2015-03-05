@@ -42,11 +42,16 @@ namespace MemgrindDifferencingEngine.DataModel
         /// </summary>
         public Dictionary<string, MemGrindDumpError> GrindDumpErrors { get; private set; }
         public Dictionary<string, MemGrindLossRecord> DefinitelyLost { get; private set; }
+        public Dictionary<string, MemGrindLossRecord> PossiblyLost { get; set; }
+        public Dictionary<string, MemGrindLossRecord> StillReachable { get; set; }
 
         public MemgrindInfo()
         {
             GrindDumpErrors = new Dictionary<string, MemGrindDumpError>();
             DefinitelyLost = new Dictionary<string, MemGrindLossRecord>();
+            PossiblyLost = new Dictionary<string, MemGrindLossRecord>();
+            StillReachable = new Dictionary<string, MemGrindLossRecord>();
         }
+
     }
 }
