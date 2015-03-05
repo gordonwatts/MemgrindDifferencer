@@ -19,5 +19,21 @@ namespace MemgrindDifferencingEngine.DataModel
         /// Lost blocks pulled from teh summary
         /// </summary>
         public int LostBlocks { get; set; }
+
+        public int IndirectlyLostBlocks { get; set; }
+
+        public int IndirectlyLostBytes { get; set; }
+
+        public int PossiblyLostBlocks { get; set; }
+
+        public int PossiblyLostBytes { get; set; }
+
+        public int ReachableBlocks { get; set; }
+
+        public int ReachableBytes { get; set; }
+
+        public int SuppressedBlocks { get; set; }
+
+        public int SuppressedBytes { get; set; }
     }
 }

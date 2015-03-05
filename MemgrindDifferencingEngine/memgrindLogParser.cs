@@ -25,7 +25,11 @@ namespace MemgrindDifferencingEngine
             // Load up the summary parse items
             var summaryParseItems = new ParseAfterLine("==16280== LEAK SUMMARY:")
             {
-                new ParseSingleLineItem("==16280==", "definitely lost: (?<bytes>[0-9,]+) bytes in (?<blocks>[0-9,]+) blocks", re => { result.LostBlocks = re.AsMemgrindNumber("blocks"); result.LostBytes = re.AsMemgrindNumber("bytes");})
+                new ParseSingleLineItem("==16280==", "definitely lost: (?<bytes>[0-9,]+) bytes in (?<blocks>[0-9,]+) blocks", re => { result.LostBlocks = re.AsMemgrindNumber("blocks"); result.LostBytes = re.AsMemgrindNumber("bytes");}),
+                new ParseSingleLineItem("==16280==", "indirectly lost: (?<bytes>[0-9,]+) bytes in (?<blocks>[0-9,]+) blocks", re => { result.IndirectlyLostBlocks = re.AsMemgrindNumber("blocks"); result.IndirectlyLostBytes = re.AsMemgrindNumber("bytes");}),
+                new ParseSingleLineItem("==16280==", "possibly lost: (?<bytes>[0-9,]+) bytes in (?<blocks>[0-9,]+) blocks", re => { result.PossiblyLostBlocks = re.AsMemgrindNumber("blocks"); result.PossiblyLostBytes = re.AsMemgrindNumber("bytes");}),
+                new ParseSingleLineItem("==16280==", "still reachable: (?<bytes>[0-9,]+) bytes in (?<blocks>[0-9,]+) blocks", re => { result.ReachableBlocks = re.AsMemgrindNumber("blocks"); result.ReachableBytes = re.AsMemgrindNumber("bytes");}),
+                new ParseSingleLineItem("==16280==", "suppressed: (?<bytes>[0-9,]+) bytes in (?<blocks>[0-9,]+) blocks", re => { result.SuppressedBlocks = re.AsMemgrindNumber("blocks"); result.SuppressedBytes = re.AsMemgrindNumber("bytes");}),
             };
             var parseItems = new List<ParseItemBase>()
             {
