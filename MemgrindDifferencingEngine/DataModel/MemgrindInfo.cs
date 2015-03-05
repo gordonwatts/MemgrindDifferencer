@@ -1,5 +1,9 @@
 ﻿
+using MemgrindDifferencingEngine.Util;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+
 namespace MemgrindDifferencingEngine.DataModel
 {
     /// <summary>
@@ -44,6 +48,7 @@ namespace MemgrindDifferencingEngine.DataModel
         public Dictionary<string, MemGrindLossRecord> DefinitelyLost { get; private set; }
         public Dictionary<string, MemGrindLossRecord> PossiblyLost { get; set; }
         public Dictionary<string, MemGrindLossRecord> StillReachable { get; set; }
+        public Dictionary<string, MemGrindLossRecord> IndirectlyLost { get; set; }
 
         public MemgrindInfo()
         {
@@ -51,7 +56,39 @@ namespace MemgrindDifferencingEngine.DataModel
             DefinitelyLost = new Dictionary<string, MemGrindLossRecord>();
             PossiblyLost = new Dictionary<string, MemGrindLossRecord>();
             StillReachable = new Dictionary<string, MemGrindLossRecord>();
+            IndirectlyLost = new Dictionary<string, MemGrindLossRecord>();
         }
 
+        /// <summary>
+        /// Add the two sets together.
+        /// </summary>
+        /// <param name="s1"></param>
+        /// <param name="s2"></param>
+        /// <returns></returns>
+        public static Dictionary<string, MemGrindLossRecord> AddThem(Dictionary<string, MemGrindLossRecord> s1, Dictionary<string, MemGrindLossRecord> s2)
+        {
+            var allKeys = s1.Keys.Concat(s2.Keys).ToHashSet();
+
+            var r = new Dictionary<string, MemGrindLossRecord>();
+            var pairs = allKeys.Select(k => Tuple.Create<string, MemGrindLossRecord, MemGrindLossRecord>(k, s1.ContainsKey(k) ? s1[k] : null, s2.ContainsKey(k) ? s2[k] : null));
+            foreach (var k in pairs)
+            {
+                if (k.Item2 == null)
+                {
+                    r[k.Item1] = k.Item3;
+                }
+                else if (k.Item3 == null)
+                {
+                    r[k.Item1] = k.Item2;
+                }
+                else
+                {
+                    r[k.Item1] = k.Item2 + k.Item3;
+                }
+
+            }
+
+            return r;
+        }
     }
 }

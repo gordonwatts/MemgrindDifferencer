@@ -37,6 +37,7 @@ namespace MemgrindDifferencingEngine
                 new ParseMultilineMessage("== Conditional jump", "Conditional jump or move", result),
                 new ParseMultilineMessage("== Invalid read of size", "Invalid Read", result),
                 new ParseLossRecord("definitely lost", result.DefinitelyLost),
+                new ParseLossRecord("indirectly lost", result.IndirectlyLost),
                 new ParseLossRecord("possibly lost", result.PossiblyLost),
                 new ParseLossRecord("still reachable", result.StillReachable),
             };

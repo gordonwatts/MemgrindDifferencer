@@ -37,8 +37,19 @@ namespace MemgrindDifferencingEngine.Parsing
                 throw new ArgumentException(string.Format("Could not parse loss line '{0}'", fullLossMessage));
             }
 
-            var r = new MemGrindLossRecord() { BlocksLost = m.AsMemgrindNumber("blocks"), BytesLost = m.AsMemgrindNumber("bytes"), FirstLine = lineInfo };
-            _errors[key] = r;
+
+            if (_errors.ContainsKey(key))
+            {
+                _errors[key].BytesLost += m.AsMemgrindNumber("bytes");
+                _errors[key].BlocksLost += m.AsMemgrindNumber("blocks");
+            }
+            else
+            {
+                var r = new MemGrindLossRecord() { BlocksLost = m.AsMemgrindNumber("blocks"), BytesLost = m.AsMemgrindNumber("bytes") };
+                _errors[key] = r;
+            }
+            _errors[key].FirstLine.Add(lineInfo);
+
         }
     }
 }

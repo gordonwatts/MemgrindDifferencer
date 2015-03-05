@@ -28,6 +28,8 @@ namespace MemgrindDifferencingEngine
                 DumpGrindErrors(results, info);
                 DumpGrindLossBlocks(results, info, "Definitely Lost", t => t.DefinitelyLost);
                 DumpGrindLossBlocks(results, info, "Possibly Lost", t => t.PossiblyLost);
+                DumpGrindLossBlocks(results, info, "Indirectly Lost", t => t.IndirectlyLost);
+                DumpGrindLossBlocks(results, info, "Def Pos Ind Summed", t => MemgrindInfo.AddThem(t.IndirectlyLost, MemgrindInfo.AddThem(t.DefinitelyLost, t.PossiblyLost)));
                 DumpGrindLossBlocks(results, info, "Still Reachable", t => t.StillReachable);
                 results.Close();
             }
