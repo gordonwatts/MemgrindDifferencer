@@ -1,5 +1,9 @@
 ﻿
+using MemgrindDifferencingEngine;
 using System;
+using System.IO;
+using System.Linq;
+
 namespace memgrind_diff
 {
     class Program
@@ -13,7 +17,17 @@ namespace memgrind_diff
         /// <param name="args"></param>
         static void Main(string[] args)
         {
-            Console.WriteLine("hi");
+            // Parse the command line arguments
+            var files = args;
+
+            // Get the info from each file.
+            var info = files.Select(x => new FileInfo(x)).Select(x => MemgrindLogParser.Parse(x)).ToArray();
+
+            // Dump the info
+            foreach (var f in info)
+            {
+                Console.WriteLine("For file: {0}", f.Description);
+            }
         }
     }
 }
