@@ -2,6 +2,7 @@
 using MemgrindDifferencingEngine.DataModel;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 namespace MemgrindDifferencingEngine.Parsing
 {
     /// <summary>
@@ -10,16 +11,18 @@ namespace MemgrindDifferencingEngine.Parsing
     class ParseMultilineMessage : ParseItemBase
     {
         private string _name;
-        private string _startsWith;
+        private string _containsText;
         bool _active = false;
         List<string> _currentError = new List<string>();
         private MemgrindInfo _info;
-        public ParseMultilineMessage(string startsWith, string name, MemgrindInfo info)
+        public ParseMultilineMessage(string containsText, string name, MemgrindInfo info)
         {
             _name = name;
-            _startsWith = startsWith;
+            _containsText = containsText;
             _info = info;
         }
+
+        private static Regex endOfError = new Regex("^==[0-9]+==$");
 
         /// <summary>
         /// We do multiple lines, so we have to see when we are active (and when we aren't!).
@@ -30,7 +33,7 @@ namespace MemgrindDifferencingEngine.Parsing
             if (_active)
             {
                 // Is this the last line of this error?
-                if (line.Trim() == "==16280==")
+                if (endOfError.Match(line.Trim()).Success)
                 {
                     // Record, and store for next time.
                     var bld = new StringBuilder();
@@ -58,7 +61,7 @@ namespace MemgrindDifferencingEngine.Parsing
             }
             else
             {
-                if (line.StartsWith(_startsWith))
+                if (line.StartsWith("==") && line.Contains(_containsText))
                 {
                     _active = true;
                     _currentError.Add(line);

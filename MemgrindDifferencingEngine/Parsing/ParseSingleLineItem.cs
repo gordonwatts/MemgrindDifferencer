@@ -8,12 +8,12 @@ namespace MemgrindDifferencingEngine.Parsing
     /// </summary>
     class ParseSingleLineItem : ParseItemBase
     {
-        private string _startsWith;
+        private string _containsText;
         private Regex _re;
         private Action<Match> _actOnResult;
-        public ParseSingleLineItem(string startsWith, string regPattern, Action<Match> parseIt)
+        public ParseSingleLineItem(string containsText, string regPattern, Action<Match> parseIt)
         {
-            _startsWith = startsWith;
+            _containsText = containsText;
             _re = new Regex(regPattern);
             _actOnResult = parseIt;
 
@@ -25,7 +25,7 @@ namespace MemgrindDifferencingEngine.Parsing
         /// <param name="line"></param>
         public override void Process(string line)
         {
-            if (line.StartsWith(_startsWith))
+            if (line.StartsWith("==") && line.Contains(_containsText))
             {
                 var m = _re.Match(line);
                 if (m.Success)

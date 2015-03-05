@@ -9,11 +9,11 @@ namespace MemgrindDifferencingEngine.Parsing
     {
         private List<ParseItemBase> _items = new List<ParseItemBase>();
         bool _active = false;
-        private string _startsWith;
+        private string _containsText;
 
         public ParseAfterLine(string startsWith)
         {
-            _startsWith = startsWith;
+            _containsText = startsWith;
         }
 
         public void Add(ParseItemBase item)
@@ -36,7 +36,7 @@ namespace MemgrindDifferencingEngine.Parsing
             }
             else
             {
-                _active = line.StartsWith(_startsWith);
+                _active = line.StartsWith("==") && line.Contains(_containsText);
             }
         }
 
