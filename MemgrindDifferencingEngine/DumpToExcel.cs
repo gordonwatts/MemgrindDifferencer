@@ -4,6 +4,7 @@ using DocumentFormat.OpenXml.Packaging;
 using MemgrindDifferencingEngine.DataModel;
 using MemgrindDifferencingEngine.ExcelHelpers;
 using MemgrindDifferencingEngine.Util;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -25,8 +26,36 @@ namespace MemgrindDifferencingEngine
             {
                 DumpSummary(results, info);
                 DumpGrindErrors(results, info);
+                DumpGrindLossBlocks(results, info, "Definitely Lost", t => t.DefinitelyLost);
                 results.Close();
             }
+        }
+
+        /// <summary>
+        /// Dump a set of loss records.
+        /// </summary>
+        /// <param name="results"></param>
+        /// <param name="info"></param>
+        /// <param name="sheetName"></param>
+        /// <param name="extractLossRecord"></param>
+        private static void DumpGrindLossBlocks(SpreadsheetDocument doc, MemgrindInfo[] infos, string sheetName, Func<MemgrindInfo, Dictionary<string, MemGrindLossRecord>> extractLossRecord)
+        {
+            var allKeys = infos.Select(t => extractLossRecord(t)).SelectMany(t => t.Keys).ToHashSet();
+
+            var table = new AutoFillTable<Dictionary<string, MemGrindLossRecord>>();
+            foreach (var r in allKeys)
+            {
+                table.AddRowNumber(r, tinfo => tinfo.ContainsKey(r) ? tinfo[r].BlocksLost : 0);
+            }
+
+            foreach (var info in infos)
+            {
+                table.FillColumn(info.Description, extractLossRecord(info));
+            }
+
+            var wsp = doc.CreateSheet(sheetName);
+            table.DumpToExcel(wsp, doc);
+            wsp.Worksheet.Save();
         }
 
         /// <summary>
