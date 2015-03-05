@@ -30,6 +30,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DocumentFormat.OpenXml, Version=2.5.5631.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\DocumentFormat.OpenXml.2.5\lib\DocumentFormat.OpenXml.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -37,18 +41,27 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AutoFillTable.cs" />
     <Compile Include="DataModel\MemGrindDumpError.cs" />
     <Compile Include="DataModel\MemgrindInfo.cs" />
+    <Compile Include="DumpToExcel.cs" />
+    <Compile Include="ExcelColumn.cs" />
     <Compile Include="MemgrindLogParser.cs" />
     <Compile Include="Parsing\ParseMultilineMessage.cs" />
     <Compile Include="Parsing\ParseItemBase.cs" />
     <Compile Include="Parsing\ParseAfterLine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Util\Collections.cs" />
+    <Compile Include="Util\ExcelUtils.cs" />
     <Compile Include="Util\Files.cs" />
     <Compile Include="Parsing\ParseSingleLineItem.cs" />
     <Compile Include="Util\re.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

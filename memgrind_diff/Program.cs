@@ -36,9 +36,11 @@ namespace memgrind_diff
                 {
                     Console.WriteLine("    Error: {0}", error.Value.Name);
                     Console.WriteLine("      Occured: {0}", error.Value.Occurances);
-                    Console.Write(error.Key);
                 }
             }
+
+            // Dump to excel
+            DumpToExcel.Dump(new FileInfo(@"..\..\..\leaks.xlsx"), info);
         }
     }
 }
