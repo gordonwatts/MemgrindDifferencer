@@ -27,6 +27,8 @@ namespace memgrind_diff
             foreach (var f in info)
             {
                 Console.WriteLine("For file: {0}", f.Description);
+                Console.WriteLine("Lost blocks: {0}", f.LostBlocks);
+                Console.WriteLine("Lost bytes: {0}", f.LostBytes);
             }
         }
     }

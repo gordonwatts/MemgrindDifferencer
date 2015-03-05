@@ -42,6 +42,9 @@
     <Compile Include="DataModel\MemgrindInfo.cs" />
     <Compile Include="MemgrindLogParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Util\Files.cs" />
+    <Compile Include="Util\ParseItem.cs" />
+    <Compile Include="Util\re.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

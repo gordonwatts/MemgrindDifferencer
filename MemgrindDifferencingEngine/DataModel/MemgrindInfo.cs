@@ -10,5 +10,14 @@ namespace MemgrindDifferencingEngine.DataModel
         /// Get/Set the description of the file
         /// </summary>
         public string Description { get; set; }
+
+        /// <summary>
+        /// Lost bytes pulled from the summary
+        /// </summary>
+        public int LostBytes { get; set; }
+        /// <summary>
+        /// Lost blocks pulled from teh summary
+        /// </summary>
+        public int LostBlocks { get; set; }
     }
 }
