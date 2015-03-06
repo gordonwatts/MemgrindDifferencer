@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 namespace MemgrindDifferencingEngine
 {
     /// <summary>
@@ -49,7 +50,21 @@ namespace MemgrindDifferencingEngine
             var table = new AutoFillTable<Dictionary<string, MemGrindLossRecord>>();
             foreach (var r in allKeys)
             {
-                table.AddRowNumber(r, tinfo => tinfo.ContainsKey(r) ? tinfo[r].BytesLost : 0);
+                // We want to condense all the key summaries, so we need to do a little work here.
+                var lines = from ifile in infos
+                            let lrinfo = extractLossRecord(ifile)
+                            where lrinfo.ContainsKey(r)
+                            from line in lrinfo[r].FirstLine
+                            select string.Format("{0}: {1}", ifile.Description, line);
+                var b = new StringBuilder();
+                foreach (var l in lines)
+                {
+                    b.AppendLine(l);
+                }
+                b.Append(r);
+
+                // Make the entry in each row of the table where there are some bytes lost.
+                table.AddRowNumber(b.ToString(), tinfo => tinfo.ContainsKey(r) ? tinfo[r].BytesLost : 0);
             }
 
             foreach (var info in infos)
