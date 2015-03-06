@@ -44,7 +44,7 @@ namespace MemgrindDifferencingEngine
         /// <param name="extractLossRecord"></param>
         private static void DumpGrindLossBlocks(SpreadsheetDocument doc, MemgrindInfo[] infos, string sheetName, Func<MemgrindInfo, Dictionary<string, MemGrindLossRecord>> extractLossRecord)
         {
-            var allKeys = infos.Select(t => extractLossRecord(t)).SelectMany(t => t.Keys).ToHashSet();
+            var allKeys = infos.Select(t => extractLossRecord(t)).SelectMany(t => t.Keys.Where(k => t[k].BytesLost > 1024)).ToHashSet();
 
             var table = new AutoFillTable<Dictionary<string, MemGrindLossRecord>>();
             foreach (var r in allKeys)
