@@ -51,8 +51,8 @@ let main argv =
     let specs =
         ["--contains", ArgType.String (fun s -> mustContainText := s), "A method that the stack must contain to be included"
          "--dumpDefinitely", ArgType.Set dumpDefinitely, "Dump definately lost blocks"
-         "--dumpPossibly", ArgType.Set dumpDefinitely, "Dump possibly lost blocks"
-         "--dumpIndirectly", ArgType.Set dumpDefinitely, "Dump indirectly lost blocks"
+         "--dumpPossibly", ArgType.Set dumpPossibly, "Dump possibly lost blocks"
+         "--dumpIndirectly", ArgType.Set dumpIndirectly, "Dump indirectly lost blocks"
         ]
         |> List.map (fun (sh, ty, desc) -> ArgInfo(sh, ty, desc)) 
 
