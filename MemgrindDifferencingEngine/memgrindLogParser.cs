@@ -11,6 +11,16 @@ namespace MemgrindDifferencingEngine
     public static class MemgrindLogParser
     {
         /// <summary>
+        /// Parse from a string path
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public static MemgrindInfo Parse(string path)
+        {
+            return Parse(new FileInfo(path));
+        }
+
+        /// <summary>
         /// Parse a log file that contains memgrind messages
         /// </summary>
         /// <param name="input"></param>
