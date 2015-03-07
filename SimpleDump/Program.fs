@@ -9,10 +9,16 @@
 
 // Use this or something similar to open the log file parser engine if you are using the command line.
 // #r @"C:\Users\Gordon\Documents\Code\MemgrindDifferencer\MemgrindDifferencingEngine\bin\Debug\MemgrindDifferencingEngine.dll";;
+
+// Flags:
+// --contains <routine-name> the stack must contian a routine somewhere in there
+// --dumpDefinitely, --dumpPossibly, --dumpIndirectly
+
 open MemgrindDifferencingEngine
 open System.Collections.Generic
 open MemgrindDifferencingEngine.DataModel
 open System.Text.RegularExpressions
+open Microsoft.FSharp.Text
 
 type LossInfo =
     | Routine of name:string * bytes:int * blocks:int
@@ -37,8 +43,49 @@ let lossRecordAsRoutines (lr : KeyValuePair<string,MemGrindLossRecord>) =
 // Arg1 is the file.
 [<EntryPoint>]
 let main argv = 
-    let o = MemgrindDifferencingEngine.MemgrindLogParser.Parse argv.[0]
+    // Argument Parsing, which will drive this hole thing. 
+    let mustContainText = ref ""
+    let dumpDefinitely = ref false
+    let dumpPossibly = ref false
+    let dumpIndirectly = ref false
+    let specs =
+        ["--contains", ArgType.String (fun s -> mustContainText := s), "A method that the stack must contain to be included"
+         "--dumpDefinitely", ArgType.Set dumpDefinitely, "Dump definately lost blocks"
+         "--dumpPossibly", ArgType.Set dumpDefinitely, "Dump possibly lost blocks"
+         "--dumpIndirectly", ArgType.Set dumpDefinitely, "Dump indirectly lost blocks"
+        ]
+        |> List.map (fun (sh, ty, desc) -> ArgInfo(sh, ty, desc)) 
+
+    // The primary function to do the work. Called once per file.
+    let compile (s:string) =
+        let o = MemgrindDifferencingEngine.MemgrindLogParser.Parse s
+        let filter lst = 
+            match mustContainText.Value.Length = 0 with
+            | true -> true
+            | false -> Seq.exists (fun (x:LossInfo) -> match x with | Routine (name, bytes, blocks) -> name.Contains(mustContainText.Value)) lst
+
+        let emptyDict = new Dictionary<string,MemGrindLossRecord> ()
+        let makeDict (flag:bool ref) dict =
+            match flag.Value with
+            | true -> dict 
+            | false -> emptyDict
+
+        let definatly = makeDict dumpDefinitely o.DefinitelyLost
+        let possibly = makeDict dumpPossibly o.PossiblyLost
+        let indirectly = makeDict dumpIndirectly o.IndirectlyLost
+
+        let allItems = [definatly; possibly; indirectly] |> Seq.ofList |> Seq.concat |> Seq.map lossRecordAsRoutines |> Seq.where filter |> Seq.concat |> Seq.iter printInCSVFormat
+
+        ()
+
     printfn "Routine\tLost Bytes\tLost Blocks"
-    let allR = o.DefinitelyLost |> Seq.map lossRecordAsRoutines |> Seq.concat |> Seq.iter printInCSVFormat
+    let () =
+        ArgParser.Parse(specs, compile)   
+
+    // Parse the file.
+    //let o = MemgrindDifferencingEngine.MemgrindLogParser.Parse argv.[0]
+    //printfn "Routine\tLost Bytes\tLost Blocks"
+    //let filter lst = Seq.exists (fun (x:LossInfo) -> match x with | Routine (name, bytes, blocks) -> name.Contains("htlExecute")) lst
+    //let allR = o.DefinitelyLost |> Seq.map lossRecordAsRoutines |> Seq.where filter |> Seq.concat |> Seq.iter printInCSVFormat
 
     0 // return an integer exit code
