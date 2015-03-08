@@ -20,12 +20,9 @@ open MemgrindDifferencingEngine.DataModel
 open System.Text.RegularExpressions
 open Microsoft.FSharp.Text
 
-type LossInfo =
-    | Routine of name:string * bytes:int * blocks:int
-
 let printInCSVFormat li =
-    match li with
-    | Routine (name, bytes, block) -> printfn "\"%s\"\t%d\t%d" name bytes block 
+    let (name, bytes, block) = li
+    printfn "\"%s\"\t%d\t%d" name bytes block 
 
 // This code parses a key/value pair from a loss record and turns it into a list of LostInfo
 // objects. We remove all duplicate routines, and attach the loss records into to
@@ -38,9 +35,57 @@ let lossRecordAsRoutines (lr : KeyValuePair<string,MemGrindLossRecord>) =
     |> Seq.cast
     |> Seq.map (fun (x : Match) -> x.Groups.[1].Value)
     |> Seq.distinct
-    |> Seq.map (fun x -> Routine (x, lrinfo.BytesLost, lrinfo.BlocksLost))
+    |> Seq.map (fun x -> (x, lrinfo.BytesLost, lrinfo.BlocksLost))
 
-// Arg1 is the file.
+// Get all loss records from a file (all the different types)
+let lossRecordFiles (fname : string) =
+    MemgrindDifferencingEngine.MemgrindLogParser.Parse fname
+
+// Given a loss record, and what we should look at, turn it into a stream
+// of loss records.
+let lossRecordFileAsKVPairs (fullFileLR : MemgrindInfo) (dumpDefinitely : bool) (dumpIndirectly : bool) (dumpPossibly : bool) =
+    let emptyDict = new Dictionary<string,MemGrindLossRecord> ()
+    let makeDict flag dict =
+        match flag with
+        | true -> dict 
+        | false -> emptyDict
+    let definatly = makeDict dumpDefinitely fullFileLR.DefinitelyLost
+    let possibly = makeDict dumpPossibly fullFileLR.PossiblyLost
+    let indirectly = makeDict dumpIndirectly fullFileLR.IndirectlyLost
+    [definatly; possibly; indirectly] |> Seq.ofList |> Seq.concat 
+
+
+// Build a filter out of a function that takes the parts of a routine. This just makes life simpler
+// by splitting the tuple into individual items and calling the function.
+let buildRoutineNameFilter ffunc =
+    let myf (x: string*int*int) =
+        let (name, bytes, blocks) = x
+        ffunc name bytes blocks
+    myf
+
+// Very simple adder.
+let addRoutineNames (left:int*int) (right:int*int) =
+    let (l2, l3) = left
+    let (r2, r3) = right
+    (l2 + r2, l3 + r3)
+
+// Create a function that will return a sequence of "reduced" routine tuples, given
+// an addr function. It will be called with two operands where the routine name is the same.
+let reduceLR addr sequence =
+    Seq.fold 
+        (fun (state: Map<string, int*int>) (routine, (bytes:int), (blocks:int)) ->
+            let origInfo = match Map.containsKey routine state with
+                            | true -> state.[routine]
+                            | false -> (0, 0)   
+            Map.add routine (addr origInfo (bytes, blocks)) state)
+        Map.empty
+        sequence
+    |> Seq.map 
+        (fun x -> 
+            let (bytes, blocks) = x.Value
+            (x.Key, bytes, blocks))
+
+// Arguments that have no flag are file names. We do one at a time. Not suggested as the output will be a bit confused.
 [<EntryPoint>]
 let main argv = 
     // Argument Parsing, which will drive this hole thing. 
@@ -62,7 +107,7 @@ let main argv =
         let filter lst = 
             match mustContainText.Value.Length = 0 with
             | true -> true
-            | false -> Seq.exists (fun (x:LossInfo) -> match x with | Routine (name, bytes, blocks) -> name.Contains(mustContainText.Value)) lst
+            | false -> Seq.exists (buildRoutineNameFilter (fun routine bytes blocks -> routine.Contains(mustContainText.Value))) lst
 
         let emptyDict = new Dictionary<string,MemGrindLossRecord> ()
         let makeDict (flag:bool ref) dict =
@@ -74,7 +119,7 @@ let main argv =
         let possibly = makeDict dumpPossibly o.PossiblyLost
         let indirectly = makeDict dumpIndirectly o.IndirectlyLost
 
-        let allItems = [definatly; possibly; indirectly] |> Seq.ofList |> Seq.concat |> Seq.map lossRecordAsRoutines |> Seq.where filter |> Seq.concat |> Seq.iter printInCSVFormat
+        let allItems = [definatly; possibly; indirectly] |> Seq.ofList |> Seq.concat |> Seq.map lossRecordAsRoutines |> Seq.where filter |> Seq.concat |> reduceLR addRoutineNames |> Seq.iter printInCSVFormat
 
         ()
 
