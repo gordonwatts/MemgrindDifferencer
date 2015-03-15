@@ -74,7 +74,10 @@ namespace MemgrindDifferencingEngine
 
             var wsp = doc.CreateSheet(sheetName);
             table.DumpToExcel(wsp, doc);
-            doc.GetSharedStringPart().SharedStringTable.Save();
+            if (doc.GetSharedStringPart().SharedStringTable != null)
+            {
+                doc.GetSharedStringPart().SharedStringTable.Save();
+            }
             wsp.Worksheet.Save();
         }
 

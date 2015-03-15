@@ -19,7 +19,7 @@
     <releaseNotes>First release</releaseNotes>
   </metadata>
   <files>
-    <file src="..\memgrind_diff\bin\Release\*" target="tools" />
+    <file src="..\memgrind_diff\bin\Release\*" target="tools" exclude="..\memgrind_diff\bin\Release\*vshost*" />
       <file src="..\SimpleDump\bin\Release\FSharp*" target="tools" />
       <file src="..\SimpleDump\bin\Release\FSharp*" target="tools" />
       <file src="..\SimpleDump\bin\Release\SimpleDump.exe" target="tools\memgrind_dump.exe" />

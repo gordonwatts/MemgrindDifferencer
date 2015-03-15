@@ -31,11 +31,17 @@ correlate them in the excel log file.
 
 In general I find it useful to shrink the column that has the crash dumps to 8 pt font, and use a very large screen.
 
+There are no options, and if you give it no files, it will write out an empty excel file. :-)
+
 memgrind_dump
 =============
 
 Looks only at memory leaks. It will extract each method name (tuned for C++) from each memory leak, and sum each time it appears by # of blocks
 lost and # of bytes lost. You can then look at the resulting file and sort by size to see what is what.
+
+The output is dumped to stdout, and can be piped into a csv file.
+
+Use -help to see the options, in particular, how to specify definately lost, possibly, or indirectly lost.
 
 Development
 ===========

@@ -38,7 +38,7 @@ namespace memgrind_diff
             }
 
             // Dump to excel
-            DumpToExcel.Dump(new FileInfo(@"..\..\..\leaks.xlsx"), info);
+            DumpToExcel.Dump(new FileInfo(@"leaks.xlsx"), info);
         }
     }
 }
