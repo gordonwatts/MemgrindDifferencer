@@ -21,17 +21,17 @@ namespace MemgrindDifferencingEngine
         /// </summary>
         /// <param name="outputFile"></param>
         /// <param name="info"></param>
-        public static void Dump(FileInfo outputFile, MemgrindInfo[] info)
+        public static void Dump(FileInfo outputFile, MemgrindInfo[] info, int smallestSize)
         {
             using (var results = SpreadsheetDocument.Create(outputFile.FullName, SpreadsheetDocumentType.Workbook))
             {
                 DumpSummary(results, info);
                 DumpGrindErrors(results, info);
-                DumpGrindLossBlocks(results, info, "Definitely Lost", t => t.DefinitelyLost);
-                DumpGrindLossBlocks(results, info, "Possibly Lost", t => t.PossiblyLost);
-                DumpGrindLossBlocks(results, info, "Indirectly Lost", t => t.IndirectlyLost);
-                DumpGrindLossBlocks(results, info, "Def Pos Ind Summed", t => MemgrindInfo.AddThem(t.IndirectlyLost, MemgrindInfo.AddThem(t.DefinitelyLost, t.PossiblyLost)));
-                DumpGrindLossBlocks(results, info, "Still Reachable", t => t.StillReachable);
+                DumpGrindLossBlocks(results, info, "Definitely Lost", t => t.DefinitelyLost, smallestSize);
+                DumpGrindLossBlocks(results, info, "Possibly Lost", t => t.PossiblyLost, smallestSize);
+                DumpGrindLossBlocks(results, info, "Indirectly Lost", t => t.IndirectlyLost, smallestSize);
+                DumpGrindLossBlocks(results, info, "Def Pos Ind Summed", t => MemgrindInfo.AddThem(t.IndirectlyLost, MemgrindInfo.AddThem(t.DefinitelyLost, t.PossiblyLost)), smallestSize);
+                DumpGrindLossBlocks(results, info, "Still Reachable", t => t.StillReachable, smallestSize);
                 results.Close();
             }
         }
@@ -43,9 +43,9 @@ namespace MemgrindDifferencingEngine
         /// <param name="info"></param>
         /// <param name="sheetName"></param>
         /// <param name="extractLossRecord"></param>
-        private static void DumpGrindLossBlocks(SpreadsheetDocument doc, MemgrindInfo[] infos, string sheetName, Func<MemgrindInfo, Dictionary<string, MemGrindLossRecord>> extractLossRecord)
+        private static void DumpGrindLossBlocks(SpreadsheetDocument doc, MemgrindInfo[] infos, string sheetName, Func<MemgrindInfo, Dictionary<string, MemGrindLossRecord>> extractLossRecord, int smallestSize)
         {
-            var allKeys = infos.Select(t => extractLossRecord(t)).SelectMany(t => t.Keys.Where(k => t[k].BytesLost > 1024)).ToHashSet();
+            var allKeys = infos.Select(t => extractLossRecord(t)).SelectMany(t => t.Keys.Where(k => t[k].BytesLost > smallestSize)).ToHashSet();
 
             var table = new AutoFillTable<Dictionary<string, MemGrindLossRecord>>();
             foreach (var r in allKeys)

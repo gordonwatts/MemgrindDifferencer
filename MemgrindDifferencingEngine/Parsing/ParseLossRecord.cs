@@ -20,7 +20,12 @@ namespace MemgrindDifferencingEngine.Parsing
             _errors = errors;
         }
 
+        // Parse the loss record header
         private static Regex _lossParse = new Regex("(?<bytes>[0-9,]+) .*bytes in (?<blocks>[0-9,]+) blocks");
+        // ==8704== 3,530 (72 direct, 3,458 indirect) bytes in 1 blocks are definitely lost in loss record 187,919 of 189,693
+        // ==8704== 40 bytes in 1 blocks are definitely lost in loss record 108,789 of 189,693
+
+        // Hold onto the results
         private Dictionary<string, MemGrindLossRecord> _errors;
 
         /// <summary>

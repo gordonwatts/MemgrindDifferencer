@@ -17,8 +17,15 @@ namespace memgrind_diff
         /// <param name="args"></param>
         static void Main(string[] args)
         {
+            var opt = new CommandLineOptions();
+            if (!CommandLine.Parser.Default.ParseArguments(args, opt))
+            {
+                Console.WriteLine("Usage: memgrind_diff [--MinimumLeakSize <n>] <file1> <file2>...");
+                return;
+            }
+
             // Parse the command line arguments
-            var files = args;
+            var files = opt.InputFiles;
 
             // Get the info from each file.
             var info = files.Select(x => new FileInfo(x)).Select(x => MemgrindLogParser.Parse(x)).ToArray();
@@ -37,8 +44,8 @@ namespace memgrind_diff
                 Console.WriteLine("  Saw {0} reachable records", f.StillReachable.Count);
             }
 
-            // Dump to excel
-            DumpToExcel.Dump(new FileInfo(@"leaks.xlsx"), info);
+            // Dump to excel (only things that are larger than a 1KB leak).
+            DumpToExcel.Dump(new FileInfo(@"leaks.xlsx"), info, opt.MinimumLeakSize);
         }
     }
 }
