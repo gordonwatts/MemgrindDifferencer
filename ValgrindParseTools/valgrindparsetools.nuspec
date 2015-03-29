@@ -5,7 +5,7 @@
     <!-- Read this before publishing packages to chocolatey.org: https://github.com/chocolatey/chocolatey/wiki/CreatePackages -->
     <id>valgrindparsetools</id>
     <title>ValgrindParseTools (Install)</title>
-    <version>1.1.0</version>
+    <version>1.1.1</version>
     <authors>Gordon Watts</authors>
     <owners>Gordon Watts</owners>
     <summary>Simple tools to parse log files that come from valgrind and produce summaries in Excel files.</summary>
@@ -16,7 +16,7 @@
     <copyright>Copyright 2015</copyright>
     <licenseUrl>http://choosealicense.com/licenses/mit/</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <releaseNotes>Added parsing for Use of uninitalized variable error</releaseNotes>
+    <releaseNotes>Set the minimum leak size reported into excel file (1024 bytes is default)</releaseNotes>
   </metadata>
   <files>
     <file src="..\memgrind_diff\bin\Release\*" target="tools" exclude="..\memgrind_diff\bin\Release\*vshost*" />

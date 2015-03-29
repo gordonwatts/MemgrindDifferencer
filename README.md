@@ -47,6 +47,14 @@ Development
 ===========
 Requires VS 2013. Everything needed should come down with nuget.
 
+Once built, you'll need to build a new file to push up to a nuget server (for choco). Do the following:
+
+--> Make sure everything is built in release mode!!!
+cd valgrindparsetools
+choco pack valgrindparsetools
+
+Then upload to your nuget feed (using myget for the official distribution).
+
 License
 =======
 MIT: http://choosealicense.com/licenses/mit/
