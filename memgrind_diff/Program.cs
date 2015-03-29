@@ -20,7 +20,7 @@ namespace memgrind_diff
             var opt = new CommandLineOptions();
             if (!CommandLine.Parser.Default.ParseArguments(args, opt))
             {
-                Console.WriteLine("Usage: memgrind_diff [--MinimumLeakSize <n>] <file1> <file2>...");
+                Console.WriteLine("Usage: memgrind_diff [--min-size <n>] <file1> <file2>...");
                 return;
             }
 
